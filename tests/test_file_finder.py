@@ -62,9 +62,7 @@ class TestFileFinderSearch:
     def test_search_complex_condition(self, sample_files):
         """Test searching with complex conditions."""
         finder = FileFinder(root_path=str(sample_files))
-        results = finder.search(
-            Condition.extension(".txt").AND(Condition.size_greater_than(100))
-        )
+        results = finder.search(Condition.extension(".txt").AND(Condition.size_greater_than(100)))
         # Only file3.txt (300 bytes) matches
         assert len(results) == 1
         assert results[0].name == "file3.txt"
@@ -205,9 +203,7 @@ class TestFileFinderRealWorldScenarios:
         """Test finding large media files for archival."""
         finder = FileFinder(root_path=str(sample_files))
         results = finder.search(
-            Condition.is_video()
-            .OR(Condition.is_image())
-            .AND(Condition.size_greater_than(100))
+            Condition.is_video().OR(Condition.is_image()).AND(Condition.size_greater_than(100))
         )
         # video.mp4 (500 bytes)
         assert len(results) == 1
@@ -216,9 +212,7 @@ class TestFileFinderRealWorldScenarios:
     def test_find_backup_files(self, sample_files):
         """Test finding backup files."""
         finder = FileFinder(root_path=str(sample_files))
-        results = finder.search(
-            Condition.name_contains("backup").OR(Condition.extension(".bak"))
-        )
+        results = finder.search(Condition.name_contains("backup").OR(Condition.extension(".bak")))
         assert len(results) == 1
         assert results[0].name == "backup.bak"
 

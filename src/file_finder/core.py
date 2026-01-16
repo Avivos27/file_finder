@@ -19,6 +19,7 @@ logger = get_logger(__name__)
 
 class ConditionOperator(Enum):
     """Operators for combining conditions."""
+
     AND = "AND"
     OR = "OR"
 
@@ -26,7 +27,7 @@ class ConditionOperator(Enum):
 class Condition:
     """
     Represents a search condition that can be chained with AND/OR operators.
-    
+
     Example:
         Condition.extension('.png').AND(Condition.size_greater_than(1000))
     """
@@ -95,10 +96,10 @@ class Condition:
     def extension(*extensions: str) -> "Condition":
         """
         Match files with specific extensions.
-        
+
         Args:
             *extensions: One or more extensions (e.g., '.png', '.pdf')
-        
+
         Example:
             Condition.extension('.png', '.jpg', '.gif')
         """
@@ -121,13 +122,14 @@ class Condition:
     def size_greater_than(size_bytes: int) -> "Condition":
         """
         Match files larger than specified size.
-        
+
         Args:
             size_bytes: Minimum file size in bytes
-        
+
         Example:
             Condition.size_greater_than(5 * 1024 * 1024)  # > 5MB
         """
+
         def predicate(path: Path, entry: os.DirEntry | None) -> bool:
             try:
                 if entry and hasattr(entry, "stat"):
@@ -142,13 +144,14 @@ class Condition:
     def size_less_than(size_bytes: int) -> "Condition":
         """
         Match files smaller than specified size.
-        
+
         Args:
             size_bytes: Maximum file size in bytes
-        
+
         Example:
             Condition.size_less_than(1024)  # < 1KB
         """
+
         def predicate(path: Path, entry: os.DirEntry | None) -> bool:
             try:
                 if entry and hasattr(entry, "stat"):
@@ -163,14 +166,15 @@ class Condition:
     def size_between(min_bytes: int, max_bytes: int) -> "Condition":
         """
         Match files with size in specified range (inclusive).
-        
+
         Args:
             min_bytes: Minimum file size in bytes
             max_bytes: Maximum file size in bytes
-        
+
         Example:
             Condition.size_between(1024, 5 * 1024 * 1024)  # 1KB to 5MB
         """
+
         def predicate(path: Path, entry: os.DirEntry | None) -> bool:
             try:
                 if entry and hasattr(entry, "stat"):
@@ -189,10 +193,10 @@ class Condition:
     def in_directory(*directories: str) -> "Condition":
         """
         Match files within specified directories (searches recursively within them).
-        
+
         Args:
             *directories: One or more directory paths or directory names
-        
+
         Example:
             Condition.in_directory('/path/to/folder', 'images')
         """
@@ -229,10 +233,10 @@ class Condition:
     def not_in_directory(*directories: str) -> "Condition":
         """
         Match files NOT in specified directories.
-        
+
         Args:
             *directories: One or more directory paths or names to exclude
-        
+
         Example:
             Condition.not_in_directory('node_modules', '.git', '__pycache__')
         """
@@ -248,10 +252,10 @@ class Condition:
     def path_matches(pattern: str) -> "Condition":
         r"""
         Match files where the full path matches a regex pattern.
-        
+
         Args:
             pattern: Regular expression pattern
-        
+
         Example:
             Condition.path_matches(r'/images/\d{4}/.*\.png')
         """
@@ -268,11 +272,11 @@ class Condition:
     def name_contains(substring: str, case_sensitive: bool = False) -> "Condition":
         """
         Match files whose name contains a substring.
-        
+
         Args:
             substring: Substring to search for
             case_sensitive: Whether to perform case-sensitive matching
-        
+
         Example:
             Condition.name_contains('backup')
         """
@@ -289,10 +293,10 @@ class Condition:
     def name_matches(pattern: str) -> "Condition":
         r"""
         Match files whose name matches a regex pattern.
-        
+
         Args:
             pattern: Regular expression pattern
-        
+
         Example:
             Condition.name_matches(r'^test_.*\.py$')
         """
@@ -307,11 +311,11 @@ class Condition:
     def name_equals(name: str, case_sensitive: bool = False) -> "Condition":
         """
         Match files with exact name.
-        
+
         Args:
             name: Exact filename to match
             case_sensitive: Whether to perform case-sensitive matching
-        
+
         Example:
             Condition.name_equals('README.md')
         """
@@ -330,10 +334,10 @@ class Condition:
     def modified_within_days(days: int) -> "Condition":
         """
         Match files modified within the last N days.
-        
+
         Args:
             days: Number of days
-        
+
         Example:
             Condition.modified_within_days(7)  # Modified in last week
         """
@@ -356,10 +360,10 @@ class Condition:
     def created_within_days(days: int) -> "Condition":
         """
         Match files created within the last N days.
-        
+
         Args:
             days: Number of days
-        
+
         Example:
             Condition.created_within_days(30)  # Created in last month
         """
@@ -383,12 +387,16 @@ class Condition:
     @staticmethod
     def is_image() -> "Condition":
         """Match common image file types."""
-        return Condition.extension(".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg", ".webp", ".tiff", ".ico")
+        return Condition.extension(
+            ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg", ".webp", ".tiff", ".ico"
+        )
 
     @staticmethod
     def is_video() -> "Condition":
         """Match common video file types."""
-        return Condition.extension(".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv", ".webm", ".m4v", ".mpg", ".mpeg")
+        return Condition.extension(
+            ".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv", ".webm", ".m4v", ".mpg", ".mpeg"
+        )
 
     @staticmethod
     def is_audio() -> "Condition":
@@ -398,7 +406,9 @@ class Condition:
     @staticmethod
     def is_document() -> "Condition":
         """Match common document file types."""
-        return Condition.extension(".pdf", ".doc", ".docx", ".txt", ".odt", ".rtf", ".md", ".markdown")
+        return Condition.extension(
+            ".pdf", ".doc", ".docx", ".txt", ".odt", ".rtf", ".md", ".markdown"
+        )
 
     @staticmethod
     def is_archive() -> "Condition":
@@ -409,7 +419,7 @@ class Condition:
 class FileFinder:
     """
     Main class for searching files based on complex conditions.
-    
+
     Example:
         finder = FileFinder(root_path='/path/to/search')
         results = finder.search(
@@ -548,9 +558,7 @@ class FileFinder:
                 # Recurse into subdirectories
                 for entry in dirs:
                     yield from self._walk_directory(
-                        Path(entry.path),
-                        recursive=True,
-                        current_depth=current_depth + 1
+                        Path(entry.path), recursive=True, current_depth=current_depth + 1
                     )
 
         except (OSError, PermissionError) as e:

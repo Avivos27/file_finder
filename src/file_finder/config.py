@@ -28,9 +28,7 @@ class Config:
             os.getenv("FILE_FINDER_FOLLOW_SYMLINKS", "false").lower() == "true"
         )
         self.default_max_depth: int | None = self._get_int_env("FILE_FINDER_MAX_DEPTH")
-        self.default_max_results: int | None = self._get_int_env(
-            "FILE_FINDER_MAX_RESULTS"
-        )
+        self.default_max_results: int | None = self._get_int_env("FILE_FINDER_MAX_RESULTS")
 
         # Performance configuration
         self.enable_caching: bool = (

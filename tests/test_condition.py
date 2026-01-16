@@ -1,7 +1,5 @@
 """Tests for Condition class."""
 
-
-
 from file_finder import Condition
 
 
@@ -229,7 +227,9 @@ class TestConditionChaining:
         # But OR makes it so ANY .py also matches
         file_names = {f.name for f in files}
         assert "file2.py" in file_names  # .py file should match via OR
-        assert "file1.txt" in file_names or "deep_file.txt" in file_names  # At least one txt in range
+        assert (
+            "file1.txt" in file_names or "deep_file.txt" in file_names
+        )  # At least one txt in range
 
     def test_multiple_and_conditions(self, sample_files):
         """Test multiple AND conditions."""
